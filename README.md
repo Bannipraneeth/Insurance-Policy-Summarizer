@@ -19,15 +19,149 @@ An intelligent document analysis platform that transforms complex insurance poli
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Backend** | FastAPI, SQLAlchemy, Pydantic |
-| **Frontend** | Streamlit |
-| **Database** | PostgreSQL |
-| **Cache** | Redis |
-| **NLP** | HuggingFace Transformers, spaCy |
-| **Text Extraction** | pdfplumber, pytesseract, BeautifulSoup |
-| **Containerization** | Docker Compose |
+### Backend
+| Package | Version | Purpose |
+|---------|---------|---------|
+| **FastAPI** | 0.104.1 | Async REST API framework |
+| **Uvicorn** | 0.24.0 | ASGI server |
+| **SQLAlchemy** | 2.0.23 | ORM for database operations |
+| **Pydantic** | 2.5.2 | Data validation & settings |
+| **Alembic** | 1.12.1 | Database migrations |
+| **Celery** | 5.3.4 | Distributed task queue |
+
+### Frontend
+| Package | Version | Purpose |
+|---------|---------|---------|
+| **Streamlit** | 1.29.0 | Web UI framework |
+| **Plotly** | 5.18.0 | Interactive visualizations |
+| **Pandas** | 2.1.3 | Data manipulation |
+
+### Database & Caching
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **PostgreSQL** | 15 | Primary database |
+| **Redis** | 7 (Alpine) | Caching & task queue broker |
+
+### NLP & Machine Learning (CPU-Optimized)
+| Package | Version | Purpose |
+|---------|---------|---------|
+| **Transformers** | ≥4.30.0 | Hugging Face transformer models |
+| **PyTorch** | ≥2.0.0 | Deep learning framework |
+| **spaCy** | ≥3.5.0 | Named Entity Recognition |
+| **SentencePiece** | ≥0.1.99 | Tokenization for transformers |
+
+### Text Extraction
+| Package | Version | Purpose |
+|---------|---------|---------|
+| **pdfplumber** | 0.10.3 | PDF text extraction |
+| **pytesseract** | 0.3.10 | OCR for images |
+| **BeautifulSoup4** | 4.12.2 | HTML parsing |
+| **Pillow** | 10.1.0 | Image processing |
+| **lxml** | 4.9.3 | XML/HTML parsing |
+
+### Export & Documentation
+| Package | Version | Purpose |
+|---------|---------|---------|
+| **ReportLab** | 4.0.7 | PDF generation |
+| **python-docx** | 1.1.0 | Word document export |
+
+### Containerization
+| Technology | Purpose |
+|------------|---------|
+| **Docker Compose** | Multi-container orchestration |
+
+---
+
+## 🤖 AI/ML Models & Transformers
+
+### Summarization Model: DistilBART
+
+| Property | Value |
+|----------|-------|
+| **Model** | [sshleifer/distilbart-cnn-12-6](https://huggingface.co/sshleifer/distilbart-cnn-12-6) |
+| **Architecture** | DistilBART (Distilled BART) |
+| **Base Model** | facebook/bart-large-cnn |
+| **Parameters** | ~306M (12 encoder + 6 decoder layers) |
+| **Task** | Abstractive Text Summarization |
+| **Optimization** | CPU-optimized (no GPU required) |
+
+#### Why DistilBART?
+- **CPU-Friendly**: 40% smaller than BART-large, runs efficiently on CPU
+- **High Quality**: Trained on CNN/DailyMail dataset for summarization
+- **Fast Inference**: Reduced decoder layers enable faster generation
+- **Production-Ready**: Well-suited for server deployment without GPU
+
+#### Model Configuration
+```python
+# Used in backend/app/nlp/summarizer.py
+pipeline(
+    "summarization",
+    model="sshleifer/distilbart-cnn-12-6",
+    device=-1,  # CPU
+    framework="pt"
+)
+```
+
+#### Summarization Parameters
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `max_length` | 130 | Maximum tokens in summary |
+| `min_length` | 30 | Minimum tokens in summary |
+| `do_sample` | False | Deterministic generation |
+| `truncation` | True | Handle long inputs |
+
+---
+
+### Named Entity Recognition: spaCy
+
+| Property | Value |
+|----------|-------|
+| **Model** | `en_core_web_sm` |
+| **Type** | Small English NLP pipeline |
+| **Size** | ~12MB |
+| **Components** | Tokenizer, Tagger, Parser, NER, Lemmatizer |
+
+#### Custom Entity Extraction
+In addition to spaCy's built-in NER, the system uses **regex-based pattern matching** for insurance-specific entities:
+
+| Entity Type | Detection Method | Example |
+|-------------|------------------|---------|
+| `monetary_amount` | Regex + spaCy | $10,000, €500, 1000 dollars |
+| `percentage` | Regex + spaCy | 20%, 0.5 percent |
+| `date` | Regex + spaCy | January 1, 2024, 01/15/2024 |
+| `time_period` | Regex | 30 days, 12 months, annual |
+| `coverage_item` | Regex | "covers hospitalization" |
+| `exclusion` | Regex | "excludes pre-existing conditions" |
+| `deductible` | Regex | $500 deductible |
+| `limit` | Regex | maximum $100,000 |
+| `party` | Regex + spaCy | Policyholder, Insurer |
+
+---
+
+### Risk Scoring Engine
+
+The risk scoring system uses a **keyword-based classification** approach combined with entity context:
+
+| Risk Level | Keywords/Patterns |
+|------------|-------------------|
+| 🔴 **Critical** | void, forfeiture, no coverage, waive all rights, null and void |
+| 🟠 **High** | excluded, terminate, penalty, breach, fraud, claim denied |
+| 🟡 **Medium** | limit, deductible, condition, waiting period, surcharge |
+| 🟢 **Low** | covered, includes, protection, benefit, insured |
+
+---
+
+### Model Loading Strategy
+
+The application uses **lazy loading** to optimize startup time and memory:
+
+```
+First Request → Load Models → Cache in Memory → Fast Subsequent Requests
+```
+
+- Models are loaded on first document upload
+- Initial load takes ~30-60 seconds (downloading ~1GB of model weights)
+- Subsequent requests use cached models
 
 ## 📁 Project Structure
 
