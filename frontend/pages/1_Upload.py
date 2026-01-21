@@ -4,19 +4,13 @@ Allows users to upload documents for processing.
 """
 import streamlit as st
 import requests
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from config import BACKEND_URL
 
 st.set_page_config(
     page_title="Upload Document - Policy Summarizer",
     page_icon="📤",
     layout="wide"
 )
-
-# Backend URL
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 st.title("📤 Upload Document")
 st.markdown("Upload your insurance policy or Terms & Conditions document for AI-powered analysis.")

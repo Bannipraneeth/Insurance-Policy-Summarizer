@@ -4,19 +4,14 @@ Shows all uploaded documents and their processing status.
 """
 import streamlit as st
 import requests
-import os
 from datetime import datetime
-from dotenv import load_dotenv
-
-load_dotenv()
+from config import BACKEND_URL
 
 st.set_page_config(
     page_title="My Documents - Policy Summarizer",
     page_icon="📁",
     layout="wide"
 )
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 st.title("📁 My Documents")
 st.markdown("View and manage your uploaded documents.")

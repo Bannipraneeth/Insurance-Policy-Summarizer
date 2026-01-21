@@ -10,7 +10,9 @@ from app.nlp.text_extractor import TextExtractor
 from app.nlp.clause_segmenter import ClauseSegmenter, ClauseSegment
 from app.nlp.ner_extractor import NERExtractor, ExtractedEntity
 from app.nlp.summarizer import Summarizer
+from app.nlp.hf_summarizer import HFAPISummarizer
 from app.nlp.risk_scorer import RiskScorer, RiskAssessment
+from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +56,8 @@ class NLPPipeline:
     def __init__(
         self,
         summarization_model: str = "sshleifer/distilbart-cnn-12-6",
-        use_spacy: bool = True
+        use_spacy: bool = True,
+        use_hf_api: bool = None
     ):
         """
         Initialize the NLP pipeline.
@@ -62,12 +65,27 @@ class NLPPipeline:
         Args:
             summarization_model: HuggingFace model for summarization
             use_spacy: Whether to use spaCy for NER
+            use_hf_api: Use HF Inference API (auto-detects from config if None)
         """
+        settings = get_settings()
+        
         self.text_extractor = TextExtractor()
         self.clause_segmenter = ClauseSegmenter()
         self.ner_extractor = NERExtractor(use_spacy=use_spacy)
-        self.summarizer = Summarizer(model_name=summarization_model)
         self.risk_scorer = RiskScorer()
+        
+        # Choose summarizer based on config (HF API for cloud, local for dev)
+        self.use_hf_api = use_hf_api if use_hf_api is not None else settings.use_hf_api
+        
+        if self.use_hf_api:
+            logger.info("Using Hugging Face Inference API for summarization")
+            self.summarizer = HFAPISummarizer(
+                model_name=summarization_model,
+                api_token=settings.hf_api_token
+            )
+        else:
+            logger.info("Using local summarization model")
+            self.summarizer = Summarizer(model_name=summarization_model)
         
         logger.info("NLP Pipeline initialized")
     

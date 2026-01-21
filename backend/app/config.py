@@ -24,13 +24,22 @@ class Settings(BaseSettings):
     summarization_model: str = "sshleifer/distilbart-cnn-12-6"
     ner_model: str = "en_core_web_sm"
     
+    # Hugging Face API (for cloud deployment with low memory)
+    hf_api_token: str = ""
+    use_hf_api: bool = False  # Set True for cloud deployment
+    
     # API Settings
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     debug: bool = True
     
-    # CORS
-    cors_origins: list[str] = ["http://localhost:8501", "http://localhost:3000"]
+    # CORS - include Streamlit Cloud domains
+    cors_origins: list[str] = [
+        "http://localhost:8501", 
+        "http://localhost:3000",
+        "https://*.streamlit.app",
+        "https://*.streamlitapp.com"
+    ]
     
     model_config = {
         "env_file": ".env",

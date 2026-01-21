@@ -4,19 +4,14 @@ Displays document summaries with filtering and traceability.
 """
 import streamlit as st
 import requests
-import os
 import json
-from dotenv import load_dotenv
-
-load_dotenv()
+from config import BACKEND_URL
 
 st.set_page_config(
     page_title="Summary View - Policy Summarizer",
     page_icon="📊",
     layout="wide"
 )
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 # Risk level colors
 RISK_COLORS = {

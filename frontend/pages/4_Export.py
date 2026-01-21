@@ -4,18 +4,13 @@ Download document analysis in various formats.
 """
 import streamlit as st
 import requests
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from config import BACKEND_URL
 
 st.set_page_config(
     page_title="Export - Policy Summarizer",
     page_icon="💾",
     layout="wide"
 )
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 st.title("💾 Export Document Analysis")
 
