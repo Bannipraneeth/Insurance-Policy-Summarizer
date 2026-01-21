@@ -104,16 +104,22 @@ st.sidebar.page_link("pages/2_Documents.py", label="📁 My Documents")
 st.sidebar.page_link("pages/3_Summary.py", label="📊 View Summary")
 st.sidebar.page_link("pages/4_Export.py", label="💾 Export")
 st.sidebar.markdown("---")
-st.sidebar.markdown("### About")
+st.sidebar.markdown("### Backend Status")
+try:
+    from config import BACKEND_URL
+    import requests
+    health_resp = requests.get(f"{BACKEND_URL}/health", timeout=5)
+    if health_resp.status_code == 200:
+        st.sidebar.success("● Connected")
+    else:
+        st.sidebar.warning("○ Server starting...")
+except Exception:
+    st.sidebar.error("○ Disconnected")
+    st.sidebar.info("Wait ~30s for server to wake up if it was idle.")
+
 st.sidebar.info("""
 AI-powered document analysis for insurance policies and Terms & Conditions.
-
-**Features:**
-- 📄 PDF, TXT, HTML support
-- 🔍 Automatic clause detection
-- 🏷️ Entity extraction
-- ⚠️ Risk scoring
-- 📊 Export reports
+...
 """)
 
 # Main content

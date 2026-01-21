@@ -52,7 +52,7 @@ if uploaded_file is not None:
                 response = requests.post(
                     f"{BACKEND_URL}/api/documents/upload",
                     files=files,
-                    timeout=60
+                    timeout=120
                 )
                 
                 if response.status_code == 200:
