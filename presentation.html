@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Based Insurance Policy Summarizer Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --secondary-text: #666666;
+            --accent-color: #3b82f6;
+            --border-color: #e5e7eb;
+            --slide-transition: 0.5s ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--slide-transition), transform var(--slide-transition);
+            transform: translateX(50px);
+            text-align: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-50px);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+        }
+
+        p {
+            font-size: 1.5rem;
+            color: var(--secondary-text);
+            max-width: 800px;
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            text-align: left;
+            font-size: 1.4rem;
+            color: var(--secondary-text);
+            list-style: none;
+            display: inline-block;
+        }
+
+        li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        li::before {
+            content: "•";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .team-member {
+            padding: 1rem;
+            border-left: 3px solid var(--border-color);
+        }
+
+        .member-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .member-id {
+            font-size: 1rem;
+            color: var(--secondary-text);
+        }
+
+        .guide-box {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        button {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 0.8rem 1.2rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            font-size: 1rem;
+            color: var(--secondary-text);
+        }
+
+        .tech-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #f3f4f6;
+            border-radius: 20px;
+            margin: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .risk-critical { background: #fee2e2; color: #991b1b; }
+        .risk-high { background: #ffedd5; color: #9a3412; }
+        .risk-medium { background: #fef9c3; color: #854d0e; }
+        .risk-low { background: #dcfce7; color: #166534; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .slide { padding: 2rem; }
+            .team-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="presentation-container">
+    <!-- Slide 1: Title -->
+    <div class="slide active">
+        <p style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 1rem;">Final Year Project Presentation</p>
+        <h1>AI-Based Insurance Policy & T&C Summarizer</h1>
+        <div class="guide-box">
+            <p style="font-size: 1.2rem;"><strong>Guide:</strong> Ms Y Sruthi</p>
+            <p style="font-size: 1rem; color: var(--secondary-text);">Professor (CSE-AI&ML)</p>
+        </div>
+        <p style="margin-top: 2rem; font-weight: 500;">Anil Neerukonda Institute of Technology and Sciences (ANITS)</p>
+    </div>
+
+    <!-- Slide 2: Team Details -->
+    <div class="slide">
+        <h2>Team Details</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="member-name">B. Maniharika</div>
+                <div class="member-id">A22126552135</div>
+            </div>
+            <div class="team-member">
+                <div class="member-name">B. Karthikeya</div>
+                <div class="member-id">A22126552129</div>
+            </div>
+            <div class="team-member">
+                <div class="member-name">G. Bhavana</div>
+                <div class="member-id">A22126552141</div>
+            </div>
+            <div class="team-member">
+                <div class="member-name">Ch. Praneeth Reddy</div>
+                <div class="member-id">A22126552210</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Introduction -->
+    <div class="slide">
+        <h2>Introduction</h2>
+        <p>Insurance policies and "Terms & Conditions" documents are notoriously long, complex, and filled with legal jargon.</p>
+        <p><strong>The Core Problem:</strong> Average users often agree to terms they don't fully understand, leading to surprises during claims.</p>
+        <p>Our project aims to bridge this gap using <strong>Artificial Intelligence</strong> to provide clear, actionable summaries.</p>
+    </div>
+
+    <!-- Slide 4: Key Features -->
+    <div class="slide">
+        <h2>Key Features</h2>
+        <ul>
+            <li><strong>Domain-Adapted Summarization:</strong> Optimized for legal/insurance terminology.</li>
+            <li><strong>Insurance-Specific NER:</strong> Automatically detects coverage, limits, and exclusions.</li>
+            <li><strong>Risk Scoring:</strong> Categorizes clauses based on impact to the user.</li>
+            <li><strong>Clause-Level Traceability:</strong> Every summary point is linked back to the original text.</li>
+            <li><strong>Multi-Format Support:</strong> Handles PDF, Images (OCR), DOCX, and Text documents.</li>
+        </ul>
+    </div>
+
+    <!-- Slide 5: Methodology -->
+    <div class="slide">
+        <h2>Methodology</h2>
+        <p>The system follows a three-stage NLP pipeline:</p>
+        <div style="text-align: left; max-width: 600px;">
+            <p><strong>1. Document Processing:</strong> Text extraction and OCR (Tesseract) for scanned documents.</p>
+            <p><strong>2. Information Extraction:</strong> Named Entity Recognition (NER) to find key policy parameters.</p>
+            <p><strong>3. Neural Summarization:</strong> Transformer models (BART) generate concise summaries.</p>
+        </div>
+    </div>
+
+    <!-- Slide 6: Technology Stack -->
+    <div class="slide">
+        <h2>Technology Stack</h2>
+        <div style="margin-top: 1rem;">
+            <span class="tech-tag">BART-Large-CNN</span>
+            <span class="tech-tag">spaCy</span>
+            <span class="tech-tag">FastAPI</span>
+            <span class="tech-tag">Streamlit</span>
+            <span class="tech-tag">Tesseract OCR</span>
+            <span class="tech-tag">Python-Docx</span>
+            <span class="tech-tag">Google Colab (T4 GPU)</span>
+        </div>
+    </div>
+
+    <!-- Slide 7: Risk Analysis -->
+    <div class="slide">
+        <h2>Risk Scoring System</h2>
+        <p>We classify clauses into four severity levels to help users focus on what matters most:</p>
+        <div style="text-align: left; margin-top: 1rem;">
+            <p><span class="risk-badge risk-critical">CRITICAL</span> Clauses with major financial impact or exclusions.</p>
+            <p><span class="risk-badge risk-high">HIGH</span> Important conditions and policy limits.</p>
+            <p><span class="risk-badge risk-medium">MEDIUM</span> Operational details and standard requirements.</p>
+            <p><span class="risk-badge risk-low">LOW</span> General information and definitions.</p>
+        </div>
+    </div>
+
+    <!-- Slide 8: System Architecture -->
+    <div class="slide">
+        <h2>System Architecture</h2>
+        <p>A modular design ensuring scalability and performance.</p>
+        <div style="border: 1px solid var(--border-color); padding: 2rem; border-radius: 8px; background: #fafafa;">
+            <div style="font-weight: 600; font-size: 1.2rem; margin-bottom: 1rem;">User Interface (Streamlit)</div>
+            <div style="margin-bottom: 1rem;">↓ API Request ↓</div>
+            <div style="font-weight: 600; font-size: 1.2rem; margin-bottom: 1rem;">Inference Engine (FastAPI + Transformers)</div>
+            <div style="margin-bottom: 1rem;">↓ Result Response ↓</div>
+            <div style="font-weight: 600; font-size: 1.2rem;">Processed Summary & Risk Heatmap</div>
+        </div>
+    </div>
+
+    <!-- Slide 9: Future Scope -->
+    <div class="slide">
+        <h2>Future Scope</h2>
+        <ul>
+            <li><strong>Database Integration:</strong> Storing document history for users.</li>
+            <li><strong>Active Learning:</strong> Improving accuracy through user feedback loops.</li>
+            <li><strong>Mobile Application:</strong> For on-the-go scanning of documents.</li>
+            <li><strong>Multi-lingual Support:</strong> Translation of summaries into regional languages.</li>
+        </ul>
+    </div>
+
+    <!-- Slide 10: Conclusion -->
+    <div class="slide">
+        <h2>Conclusion</h2>
+        <p>Our AI-Based Summarizer transforms dense legal jargon into user-friendly insights.</p>
+        <p>By highlighting risks and key entities, we empower policyholders to make informed decisions and reduce claim surprises.</p>
+    </div>
+
+    <!-- Slide 11: Thank You -->
+    <div class="slide">
+        <h1>Thank You!</h1>
+        <p>Questions? We'd love to hear your feedback.</p>
+        <div style="margin-top: 2rem;">
+            <p style="font-size: 1.1rem; color: var(--text-color);">Team: Maniharika, Karthikeya, Bhavana, Praneeth</p>
+            <p style="font-size: 1.1rem; color: var(--text-color);">Guide: Ms Y Sruthi</p>
+        </div>
+    </div>
+</div>
+
+<div class="slide-number" id="slideNumber">1 / 11</div>
+
+<div class="controls">
+    <button onclick="prevSlide()" title="Previous slide">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button onclick="nextSlide()" title="Next slide">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+</div>
+
+<div class="progress-bar" id="progressBar" style="width: 9.09%;"></div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+    const slideNumber = document.getElementById('slideNumber');
+
+    function updatePresentation() {
+        slides.forEach((slide, index) => {
+            slide.classList.remove('active', 'prev');
+            if (index === currentSlide) {
+                slide.classList.add('active');
+            } else if (index < currentSlide) {
+                slide.classList.add('prev');
+            }
+        });
+
+        const progress = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        slideNumber.innerText = `${currentSlide + 1} / ${slides.length}`;
+    }
+
+    function nextSlide() {
+        if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            updatePresentation();
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlide > 0) {
+            currentSlide--;
+            updatePresentation();
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
+    });
+</script>
+
+</body>
+</html>
